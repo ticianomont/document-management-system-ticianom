@@ -50,7 +50,8 @@ app.use((err, req, res, next) => {
   }
 
   if (err instanceof multer.MulterError) {
-    return res.status(400).json({ message: err.message });
+    const statusCode = err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+    return res.status(statusCode).json({ message: err.message });
   }
 
   if (err instanceof AppError) {
