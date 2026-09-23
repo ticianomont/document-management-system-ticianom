@@ -15,14 +15,6 @@ function normalizeDocument(document) {
 }
 
 function saveDocument(file, owner) {
-  if (!file || !file.originalname || !file.path) {
-    throw new Error('Arquivo obrigatório');
-  }
-
-  if (!owner || typeof owner !== 'string' || !owner.trim()) {
-    throw new Error('Identificador do usuário obrigatório');
-  }
-
   ensureStorageDirectory();
 
   const extension = path.extname(file.originalname);
@@ -37,7 +29,7 @@ function saveDocument(file, owner) {
     originalName: file.originalname,
     size: file.size,
     uploadedAt: new Date().toISOString(),
-    owner: owner.trim(),
+    owner,
     storagePath: destinationPath,
   };
 
@@ -55,11 +47,6 @@ function listDocuments(owner) {
   return filteredDocuments.map((document) => normalizeDocument(document));
 }
 
-function getDocumentById(id) {
-  const document = documents.get(id);
-  return document ? normalizeDocument(document) : null;
-}
-
 function getDocumentFile(id) {
   return documents.get(id) || null;
 }
@@ -67,6 +54,5 @@ function getDocumentFile(id) {
 module.exports = {
   saveDocument,
   listDocuments,
-  getDocumentById,
   getDocumentFile,
 };

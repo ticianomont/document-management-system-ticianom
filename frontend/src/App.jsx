@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import UploadComponent from './components/UploadComponent';
 import DocumentList from './components/DocumentList';
+import './App.css';
 
 export default function App() {
   const [owner, setOwner] = useState('user-123');
@@ -11,12 +12,17 @@ export default function App() {
   }
 
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', padding: '2rem' }}>
-      <h1>Document Management System</h1>
-      <label>
-        Usuário:{' '}
+    <main className="app">
+      <header className="app-header">
+        <h1>📄 Document Management System</h1>
+        <p>Envie, liste e baixe seus documentos com facilidade.</p>
+      </header>
+
+      <label className="owner-field">
+        Usuário:
         <input value={owner} onChange={(event) => setOwner(event.target.value)} />
       </label>
+
       <UploadComponent owner={owner} onUploadSuccess={handleUploadSuccess} />
       <DocumentList owner={owner} refreshKey={refreshKey} />
     </main>

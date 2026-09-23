@@ -31,25 +31,29 @@ export default function DocumentList({ owner, refreshKey }) {
   }, [loadDocuments, refreshKey]);
 
   if (errorMessage) {
-    return <p role="alert">{errorMessage}</p>;
+    return <p className="error-message" role="alert">{errorMessage}</p>;
   }
 
   return (
-    <div>
+    <section className="card">
       <h2>Documentos</h2>
       {documents.length === 0 ? (
-        <p>Nenhum documento enviado ainda.</p>
+        <p className="empty-state">Nenhum documento enviado ainda.</p>
       ) : (
-        <ul>
+        <ul className="document-list">
           {documents.map((document) => (
-            <li key={document.id}>
-              {document.originalName} ({formatSize(document.size)}) -{' '}
-              {formatDate(document.uploadedAt)} - dono: {document.owner}{' '}
+            <li key={document.id} className="document-item">
+              <div className="document-info">
+                <div className="document-name">{document.originalName}</div>
+                <div className="document-meta">
+                  {formatSize(document.size)} · {formatDate(document.uploadedAt)} · dono: {document.owner}
+                </div>
+              </div>
               <DownloadButton documentId={document.id} fileName={document.originalName} />
             </li>
           ))}
         </ul>
       )}
-    </div>
+    </section>
   );
 }

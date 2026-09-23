@@ -1,4 +1,6 @@
+const fs = require('node:fs');
 const documentService = require('../services/documentService');
+const { sendErrorResponse } = require('../utils/errors');
 
 function uploadDocument(req, res) {
   try {
@@ -8,8 +10,12 @@ function uploadDocument(req, res) {
 
     return res.status(201).json(document);
   } catch (error) {
-    const statusCode = error.message.includes('Arquivo') || error.message.includes('usuário') ? 400 : 500;
-    return res.status(statusCode).json({ message: error.message });
+    // Remove o arquivo que o multer já gravou, evitando lixo órfão no storage.
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    return sendErrorResponse(error, res, 'Erro ao enviar documento');
   }
 }
 
@@ -20,7 +26,7 @@ function listDocuments(req, res) {
 
     return res.json(documents);
   } catch (error) {
-    return res.status(500).json({ message: 'Erro ao listar documentos' });
+    return sendErrorResponse(error, res, 'Erro ao listar documentos');
   }
 }
 
@@ -29,13 +35,9 @@ function downloadDocument(req, res) {
     const { id } = req.params;
     const document = documentService.downloadDocument(id);
 
-    if (!document) {
-      return res.status(404).json({ message: 'Documento não encontrado' });
-    }
-
     return res.download(document.storagePath, document.originalName);
   } catch (error) {
-    return res.status(500).json({ message: 'Erro ao baixar documento' });
+    return sendErrorResponse(error, res, 'Erro ao baixar documento');
   }
 }
 
